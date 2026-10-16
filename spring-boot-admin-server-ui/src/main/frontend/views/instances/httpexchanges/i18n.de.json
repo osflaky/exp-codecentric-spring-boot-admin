@@ -1,0 +1,26 @@
+{
+  "instances": {
+    "httpexchanges": {
+      "label": "HTTP-Exchanges",
+      "chart": {
+        "avg_time": "ø Dauer",
+        "max_time": "Max. Dauer",
+        "status_4xx": "Status 4xx",
+        "status_5xx": "Status 5xx",
+        "successful_requests": "Erfolgreiche Anfragen",
+        "total_requests": "Anfragen insgesamt"
+      },
+      "limit": "Limit",
+      "filter": {
+        "client_errors": "Client-Fehler",
+        "exclude_actuator": "Ignoriere {actuator}/**",
+        "server_errors": "Server-Fehler",
+        "success": "Erfolgreich"
+      },
+      "method": "Methode",
+      "no_data": "Keine Anzeigedaten vorhanden.",
+      "time": "Dauer",
+      "timestamp": "Zeitstempel"
+    }
+  }
+}

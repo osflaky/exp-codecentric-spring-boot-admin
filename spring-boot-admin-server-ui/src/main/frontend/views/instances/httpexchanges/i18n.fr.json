@@ -1,0 +1,25 @@
+{
+  "instances": {
+    "httpexchanges": {
+      "label": "Exchanges HTTP",
+      "chart": {
+        "avg_time": "ø duration",
+        "max_time": "durée max",
+        "status_4xx": "statut 4xx",
+        "status_5xx": "statut 5xx",
+        "successful_requests": "requêtes en succès",
+        "total_requests": "requêtes au total"
+      },
+      "limit": "limite",
+      "filter": {
+        "client_errors": "Erreurs clientes",
+        "exclude_actuator": "exclure {actuator}/**",
+        "server_errors": "Erreurs serveurs",
+        "success": "succès"
+      },
+      "method": "Methodes",
+      "status": "Statut",
+      "time": "Temps"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "instances": {
+    "beans": {
+      "label": "Bean",
+      "name": "名稱",
+      "aliases": "別名",
+      "type": "類型",
+      "resource": "資源",
+      "dependencies": "相依元件"
+    }
+  }
+}

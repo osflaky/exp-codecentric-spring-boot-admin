@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2014-2020 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>spring-boot-admin-docs</artifactId>
+
+    <packaging>pom</packaging>
+
+    <name>Spring Boot Admin Docs</name>
+    <description>Spring Boot Admin Docs</description>
+
+    <parent>
+        <groupId>de.codecentric</groupId>
+        <artifactId>spring-boot-admin-build</artifactId>
+        <version>${revision}</version>
+        <relativePath>../spring-boot-admin-build</relativePath>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <configuration>
+                    <workingDirectory>src/site</workingDirectory>
+                    <environmentVariables>
+                        <NODE_ENV>production</NODE_ENV>
+                        <VERSION>${project.version}</VERSION>
+                    </environmentVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install-node-and-npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <phase>pre-site</phase>
+                        <configuration>
+                            <npmVersion>${npm.version}</npmVersion>
+                            <nodeVersion>${node.version}</nodeVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-install</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>ci --prefer-offline --no-progress --no-audit --silent</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm-build</id>
+                        <phase>site</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build:prod</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.rodnansol</groupId>
+                <artifactId>spring-configuration-property-documenter-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-adoc</id>
+                        <goals>
+                            <goal>generate-and-aggregate-documents</goal>
+                        </goals>
+                        <phase>pre-site</phase>
+                        <configuration>
+                            <type>ADOC</type>
+                            <inputs>
+                                <input>
+                                    <name>spring-boot-admin-server</name>
+                                    <!-- TODO use ${project.rootDirectory}/spring-boot-admin-server as soon as migrated to maven 4 -->
+                                    <input>../spring-boot-admin-server</input>
+                                </input>
+                            </inputs>
+                            <outputFile>${project.build.directory}/aggregated-adoc.adoc</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

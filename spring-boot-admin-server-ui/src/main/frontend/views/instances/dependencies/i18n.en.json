@@ -1,0 +1,18 @@
+{
+  "instances": {
+    "dependencies": {
+      "label": "Dependencies",
+      "no_data_provided": "No data provided. Please check if you have configured software bill of materials (SBOM) correctly.",
+      "list": {
+        "header": {
+          "group": "Group",
+          "name": "Name",
+          "version": "Version",
+          "publisher": "Publisher",
+          "description": "Description",
+          "licenses": "Licenses"
+        }
+      }
+    }
+  }
+}

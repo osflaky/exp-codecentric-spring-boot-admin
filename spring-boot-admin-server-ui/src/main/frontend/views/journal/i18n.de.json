@@ -1,0 +1,21 @@
+{
+  "journal": {
+    "title": "Ereignis-Journal",
+    "label": "Journal",
+    "auto_update": "Ereignisse automatisch aktualisieren",
+    "error": {
+      "generic": "Fehler beim Abrufen neuer Ereignisse vom Server"
+    },
+    "filter": {
+      "application": {
+        "any": "Alle Anwendungen"
+      },
+      "event_type": {
+        "any": "Jeder Typ"
+      },
+      "instance_id": {
+        "any": "Alle Instanzen"
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "journal": {
+    "title": "Bitácora de eventos",
+    "label": "Eventos",
+    "auto_update": "Actualizar eventos automáticamente",
+    "error": {
+      "generic": "Error al recuperar nuevos eventos del servidor"
+    },
+    "filter": {
+      "application": {
+        "any": "Cualquiera"
+      },
+      "event_type": {
+        "any": "Cualquiera"
+      },
+      "instance_id": {
+        "any": "Cualquiera"
+      }
+    }
+  }
+}

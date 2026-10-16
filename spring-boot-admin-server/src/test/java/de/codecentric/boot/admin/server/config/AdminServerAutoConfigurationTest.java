@@ -1,0 +1,124 @@
+/*
+ * Copyright 2014-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package de.codecentric.boot.admin.server.config;
+
+import java.time.Duration;
+
+import com.hazelcast.config.Config;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.hazelcast.autoconfigure.HazelcastAutoConfiguration;
+import org.springframework.boot.http.client.InetAddressFilter;
+import org.springframework.boot.http.client.autoconfigure.reactive.ReactiveHttpClientAutoConfiguration;
+import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
+import org.springframework.boot.webclient.autoconfigure.WebClientAutoConfiguration;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import reactor.core.publisher.Mono;
+
+import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;
+import de.codecentric.boot.admin.server.domain.entities.SnapshottingInstanceRepository;
+import de.codecentric.boot.admin.server.eventstore.ConcurrentMapEventStore;
+import de.codecentric.boot.admin.server.eventstore.HazelcastEventStore;
+import de.codecentric.boot.admin.server.eventstore.InstanceEventStore;
+import de.codecentric.boot.admin.server.notify.HazelcastNotificationTrigger;
+import de.codecentric.boot.admin.server.notify.MailNotifier;
+import de.codecentric.boot.admin.server.notify.NotificationTrigger;
+import de.codecentric.boot.admin.server.notify.Notifier;
+import de.codecentric.boot.admin.server.services.StatusUpdater;
+import de.codecentric.boot.admin.server.utils.SsrfUrlValidator;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class AdminServerAutoConfigurationTest {
+
+	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
+		.withConfiguration(AutoConfigurations.of(ReactiveHttpClientAutoConfiguration.class,
+				WebClientAutoConfiguration.class, HazelcastAutoConfiguration.class, WebMvcAutoConfiguration.class,
+				AdminServerHazelcastAutoConfiguration.class, AdminServerAutoConfiguration.class))
+		.withUserConfiguration(AdminServerMarkerConfiguration.class);
+
+	@Test
+	void simpleConfig() {
+		this.contextRunner.run((context) -> {
+			assertThat(context).getBean(InstanceRepository.class).isInstanceOf(SnapshottingInstanceRepository.class);
+			assertThat(context).doesNotHaveBean(MailNotifier.class);
+			assertThat(context).getBean(InstanceEventStore.class).isInstanceOf(ConcurrentMapEventStore.class);
+		});
+	}
+
+	@Test
+	void hazelcastConfig() {
+		this.contextRunner.withUserConfiguration(TestHazelcastConfig.class).run((context) -> {
+			assertThat(context).getBean(InstanceEventStore.class).isInstanceOf(HazelcastEventStore.class);
+			assertThat(context).getBean(NotificationTrigger.class).isInstanceOf(HazelcastNotificationTrigger.class);
+		});
+	}
+
+	@Test
+	void shouldApplyConfiguredTimeoutFromProperties() {
+		this.contextRunner
+			.withPropertyValues("spring.boot.admin.monitor.default-timeout=5s",
+					"spring.boot.admin.monitor.status-interval=10s")
+			.run((context) -> {
+				StatusUpdater updater = context.getBean(StatusUpdater.class);
+				assertThat(updater).extracting("timeout").isEqualTo(Duration.ofSeconds(5));
+			});
+	}
+
+	@Test
+	void shouldClampTimeoutToInterval() {
+		this.contextRunner
+			.withPropertyValues("spring.boot.admin.monitor.default-timeout=20s",
+					"spring.boot.admin.monitor.status-interval=10s")
+			.run((context) -> {
+				StatusUpdater updater = context.getBean(StatusUpdater.class);
+				assertThat(updater).extracting("timeout").isEqualTo(Duration.ofSeconds(10));
+			});
+	}
+
+	@Test
+	void shouldNotRegisterInetAddressFilterByDefault() {
+		this.contextRunner.run((context) -> {
+			assertThat(context).doesNotHaveBean(InetAddressFilter.class);
+			assertThat(context).hasSingleBean(SsrfUrlValidator.class);
+		});
+	}
+
+	@Test
+	void shouldRegisterInetAddressFilterWhenSsrfProtectionEnabled() {
+		this.contextRunner.withPropertyValues("spring.boot.admin.ssrf-protection.enabled=true").run((context) -> {
+			assertThat(context).hasSingleBean(InetAddressFilter.class);
+			assertThat(context).hasSingleBean(SsrfUrlValidator.class);
+		});
+	}
+
+	public static class TestHazelcastConfig {
+
+		@Bean
+		public Config config() {
+			return new Config();
+		}
+
+		@Bean
+		public Notifier notifier() {
+			return (e) -> Mono.empty();
+		}
+
+	}
+
+}

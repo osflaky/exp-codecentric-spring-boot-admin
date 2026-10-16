@@ -1,0 +1,26 @@
+{
+  "instances": {
+    "httpexchanges": {
+      "chart": {
+        "avg_time": "ø задержка",
+        "max_time": "максимальная задержка",
+        "status_4xx": "статус 4xx",
+        "status_5xx": "статус 5xx",
+        "successful_requests": "успешные запросы",
+        "total_requests": "всего запросов"
+      },
+      "limit": "ограничение",
+      "filter": {
+        "client_errors": "ошибки на клиенте",
+        "exclude_actuator": "исключить {actuator}/**",
+        "server_errors": "ошибки сервера",
+        "success": "успех"
+      },
+      "method": "Метод",
+      "status": "Статус",
+      "time": "Время",
+      "timestamp": "Время",
+      "uri": "Путь"
+    }
+  }
+}

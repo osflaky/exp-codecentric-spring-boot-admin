@@ -1,0 +1,12 @@
+{
+  "instances": {
+    "metrics": {
+      "label": "指標",
+      "add_metric": "新增指標",
+      "fetching_tags": "正在取得可用標籤",
+      "no_tags": "(無標籤)",
+      "no_tags_available": "沒有可用的標籤。",
+      "metrics_not_supported_spring_boot_1": "Spring Boot 1.x 的應用程式不支援指標功能。"
+    }
+  }
+}

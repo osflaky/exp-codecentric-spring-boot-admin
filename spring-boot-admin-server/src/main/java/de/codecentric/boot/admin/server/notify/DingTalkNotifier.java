@@ -1,0 +1,131 @@
+/*
+ * Copyright 2014-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package de.codecentric.boot.admin.server.notify;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.client5.http.utils.Base64;
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Mono;
+
+import de.codecentric.boot.admin.server.domain.entities.Instance;
+import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;
+import de.codecentric.boot.admin.server.domain.events.InstanceEvent;
+import de.codecentric.boot.admin.server.notify.filter.AbstractContentNotifier;
+
+/**
+ * Notifier submitting events to DingTalk.
+ *
+ * @author Mask
+ */
+@Slf4j
+public class DingTalkNotifier extends AbstractContentNotifier {
+
+	private static final String DEFAULT_MESSAGE = "#{name} #{id} is #{status}";
+
+	private RestTemplate restTemplate;
+
+	/**
+	 * Webhook URI for the DingTalk API.
+	 */
+	private String webhookUrl;
+
+	/**
+	 * Secret for DingTalk.
+	 */
+	@Nullable private String secret;
+
+	public DingTalkNotifier(InstanceRepository repository, RestTemplate restTemplate) {
+		super(repository);
+		this.restTemplate = restTemplate;
+	}
+
+	@Override
+	protected Mono<Void> doNotify(InstanceEvent event, Instance instance) {
+		return Mono
+			.fromRunnable(() -> restTemplate.postForEntity(buildUrl(), createMessage(event, instance), Void.class));
+	}
+
+	private String buildUrl() {
+		Long timestamp = System.currentTimeMillis();
+		return String.format("%s&timestamp=%s&sign=%s", webhookUrl, timestamp, getSign(timestamp));
+	}
+
+	protected Object createMessage(InstanceEvent event, Instance instance) {
+		Map<String, Object> messageJson = new HashMap<>();
+		messageJson.put("msgtype", "text");
+
+		Map<String, Object> content = new HashMap<>();
+		content.put("content", createContent(event, instance));
+		messageJson.put("text", content);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		return new HttpEntity<>(messageJson, headers);
+	}
+
+	@Override
+	protected String getDefaultMessage() {
+		return DEFAULT_MESSAGE;
+	}
+
+	private String getSign(Long timestamp) {
+		try {
+			String stringToSign = timestamp + "\n" + secret;
+			Mac mac = Mac.getInstance("HmacSHA256");
+			mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+			byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
+			return URLEncoder.encode(new String(Base64.encodeBase64(signData)), StandardCharsets.UTF_8);
+		}
+		catch (Exception ex) {
+			log.warn("Failed to sign message", ex);
+		}
+		return "";
+	}
+
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
+
+	public String getWebhookUrl() {
+		return webhookUrl;
+	}
+
+	public void setWebhookUrl(String webhookUrl) {
+		this.webhookUrl = webhookUrl;
+	}
+
+	@Nullable public String getSecret() {
+		return secret;
+	}
+
+	public void setSecret(@Nullable String secret) {
+		this.secret = secret;
+	}
+
+}

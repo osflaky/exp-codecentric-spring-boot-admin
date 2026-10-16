@@ -1,0 +1,65 @@
+{
+  "instances": {
+    "details": {
+      "label": "Подробности",
+      "cache": {
+        "hit_ratio": "Коэффициент попадания",
+        "hits": "Попадания",
+        "misses": "Промахи",
+        "size": "Размер"
+      },
+      "datasource": {
+        "active_connections": "Активные подключения",
+        "min_connections": "Минимальные подключения",
+        "max_connections": "Максимальные подключения",
+        "title": "Datasource: {dataSource}",
+        "unlimited": "неограниченный"
+      },
+      "gc": {
+        "count": "Количество",
+        "time_spent_max": "Максимум потраченного времени",
+        "time_spent_total": "Общее потраченное время",
+        "title": "Паузы сборщика мусора"
+      },
+      "health": {
+        "title": "Здоровье",
+        "toggle_details": "Переключить детали состояния {name}"
+      },
+      "health_group": {
+        "title": "Группа здоровья"
+      },
+      "info": {
+        "no_info_provided": "Информация не предоставлена.",
+        "title": "Информация"
+      },
+      "memory": {
+        "max": "Максимум",
+        "metaspace": "Metaspace",
+        "size": "Размер",
+        "title": "Память",
+        "used": "Используется",
+        "committed": "Зарезервировано"
+      },
+      "metadata": {
+        "no_data_provided": "Метаданные не предоставлены.",
+        "title": "Метаданные"
+      },
+      "process": {
+        "cpus": "Процессоры",
+        "pid": "PID (Идентификатор процесса)",
+        "parent_pid": "Родительский PID",
+        "owner": "Владелец",
+        "process_cpu_usage": "Использование процессами",
+        "system_cpu_usage": "Использование системой",
+        "title": "Процесс",
+        "uptime": "Время работы"
+      },
+      "threads": {
+        "daemon": "Демоны",
+        "live": "Живые потоки",
+        "peak_live": "Максимум живых потоков",
+        "title": "Потоки"
+      }
+    }
+  }
+}

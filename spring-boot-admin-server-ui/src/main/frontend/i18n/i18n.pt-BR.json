@@ -1,0 +1,52 @@
+{
+  "error": {
+    "server_connection_failed": "Falha na conexão com o servidor.  "
+  },
+  "term": {
+    "affects_all_instances": "Affects all {count} instances",
+    "affects_this_instance_only": "Affects only this instance",
+    "application": "Aplicação",
+    "attributes": "Atributos",
+    "bytes": "Bytes",
+    "cancel": "Cancelar",
+    "clear": "Clear",
+    "cleared": "Limpo",
+    "close": "Fechar",
+    "confirm": "Confirmar",
+    "delete": "Remover",
+    "deleted": "Removido",
+    "duration": "Duração",
+    "event": "Evento",
+    "ever": "nunca",
+    "executing": "Executando...",
+    "execution_failed": "Falha na execução.",
+    "execution_successful": "Executado com sucesso.",
+    "failed": "Falha",
+    "float": "Float",
+    "hours": "{count} hora | {count} horas",
+    "instances": "Instâncias",
+    "integer": "Integer",
+    "milliseconds": "Milissegundos",
+    "minutes": "{count} minuto | {count} minutos",
+    "percent": "por cento",
+    "name": "Nome",
+    "operations": "Operações",
+    "save": "Salvar",
+    "stacktrace": "Stacktrace",
+    "suppress": "Esconder",
+    "time": "Tempo",
+    "unsuppress": "Exibir",
+    "username": "Nome do usuário"
+  },
+  "time_short": {
+    "unknown": "desconhecido",
+    "milliseconds": "{count}ms",
+    "seconds": "{count}s",
+    "minutes": "{count}min",
+    "hours": "{count}h",
+    "days": "{count}d",
+    "weeks": "{count}sem",
+    "months": "{count}mês",
+    "years": "{count}a"
+  }
+}

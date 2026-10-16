@@ -1,0 +1,21 @@
+{
+  "journal": {
+    "title": "Event Journal",
+    "label": "Journal",
+    "auto_update": "Auto-update events",
+    "error": {
+      "generic": "Error retrieving new events from server"
+    },
+    "filter": {
+      "application": {
+        "any": "Any"
+      },
+      "event_type": {
+        "any": "Any"
+      },
+      "instance_id": {
+        "any": "Any"
+      }
+    }
+  }
+}

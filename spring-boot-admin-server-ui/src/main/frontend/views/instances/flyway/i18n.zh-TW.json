@@ -1,0 +1,17 @@
+{
+  "instances": {
+    "flyway": {
+      "label": "Flyway",
+      "type": "類型",
+      "checksum": "檢查碼",
+      "version": "版本",
+      "description": "說明",
+      "script": "指令碼",
+      "state": "狀態",
+      "installed_by": "安裝者",
+      "installed_on": "安裝時間",
+      "installed_rank": "安裝順序",
+      "execution_time": "執行時間"
+    }
+  }
+}

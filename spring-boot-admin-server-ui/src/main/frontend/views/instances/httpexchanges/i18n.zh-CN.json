@@ -1,0 +1,25 @@
+{
+  "instances": {
+    "httpexchanges": {
+      "chart": {
+        "avg_time": "平均时长",
+        "max_time": "最大时长",
+        "status_4xx": "4xx失败总数",
+        "status_5xx": "5xx失败总数",
+        "successful_requests": "请求成功",
+        "total_requests": "请求总数"
+      },
+      "filter": {
+        "client_errors": "客户端错误",
+        "exclude_actuator": "排除 {actuator}/**",
+        "server_errors": "服务器错误",
+        "success": "请求成功"
+      },
+      "method": "方法",
+      "status": "状态",
+      "time": "时长",
+      "timestamp": "时间戳",
+      "uri": "路径"
+    }
+  }
+}

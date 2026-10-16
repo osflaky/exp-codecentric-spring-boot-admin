@@ -1,0 +1,24 @@
+{
+  "instances": {
+    "httpexchanges": {
+      "chart": {
+        "avg_time": "ø duração",
+        "max_time": "duração máxima",
+        "status_4xx": "status 4xx",
+        "status_5xx": "status 5xx",
+        "successful_requests": "Requisições sucedidas",
+        "total_requests": "total de requisições"
+      },
+      "limit": "limite",
+      "filter": {
+        "client_errors": "erros de cliente",
+        "exclude_actuator": "excluir {actuator}/**",
+        "server_errors": "erros do servidor",
+        "success": "sucesso"
+      },
+      "method": "Metodo",
+      "time": "Tempo",
+      "uri": "Caminho"
+    }
+  }
+}

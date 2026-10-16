@@ -1,0 +1,168 @@
+/*
+ * Copyright 2014-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package de.codecentric.boot.admin.server.notify;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jspecify.annotations.Nullable;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
+
+import de.codecentric.boot.admin.server.domain.entities.Instance;
+import de.codecentric.boot.admin.server.domain.entities.InstanceRepository;
+import de.codecentric.boot.admin.server.domain.events.InstanceEvent;
+import de.codecentric.boot.admin.server.notify.filter.AbstractContentNotifier;
+
+/**
+ * Notifier submitting events to Telegram.
+ */
+public class TelegramNotifier extends AbstractContentNotifier {
+
+	private static final String DEFAULT_MESSAGE = "<strong>#{name}</strong>/#{id} is <strong>#{status}</strong>";
+
+	private RestTemplate restTemplate;
+
+	/**
+	 * base url for telegram (i.e. https://api.telegram.org)
+	 */
+	private String apiUrl = "https://api.telegram.org";
+
+	/**
+	 * Unique identifier for the target chat or username of the target channel
+	 */
+	@Nullable private String chatId;
+
+	/**
+	 * Unique identifier for the target topic of the target super group
+	 */
+	@Nullable private Integer messageThreadId;
+
+	/**
+	 * The token identifying und authorizing your Telegram bot (e.g.
+	 * `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11`)
+	 */
+	@Nullable private String authToken;
+
+	/**
+	 * Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width
+	 * text or inline URLs in your bot's message.
+	 */
+	private String parseMode = "HTML";
+
+	/**
+	 * If true users will receive a notification with no sound.
+	 */
+	private boolean disableNotify = false;
+
+	public TelegramNotifier(InstanceRepository repository, RestTemplate restTemplate) {
+		super(repository);
+		this.restTemplate = restTemplate;
+	}
+
+	@Override
+	protected Mono<Void> doNotify(InstanceEvent event, Instance instance) {
+		return Mono
+			.fromRunnable(() -> restTemplate.getForObject(buildUrl(), Void.class, createMessage(event, instance)));
+	}
+
+	protected String buildUrl() {
+		UriComponentsBuilder builder = UriComponentsBuilder
+			.fromUriString(this.apiUrl + "/bot" + this.authToken + "/sendmessage")
+			.queryParam("chat_id", "{chat_id}")
+			.queryParam("text", "{text}")
+			.queryParam("parse_mode", "{parse_mode}")
+			.queryParam("disable_notification", "{disable_notification}");
+
+		if (this.messageThreadId != null) {
+			builder.queryParam("message_thread_id", "{message_thread_id}");
+		}
+
+		return builder.build().toUriString();
+	}
+
+	private Map<String, Object> createMessage(InstanceEvent event, Instance instance) {
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("chat_id", this.chatId);
+		if (this.messageThreadId != null) {
+			parameters.put("message_thread_id", this.messageThreadId);
+		}
+		parameters.put("parse_mode", this.parseMode);
+		parameters.put("disable_notification", this.disableNotify);
+		parameters.put("text", createContent(event, instance));
+		return parameters;
+	}
+
+	@Override
+	protected String getDefaultMessage() {
+		return DEFAULT_MESSAGE;
+	}
+
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
+
+	public String getApiUrl() {
+		return apiUrl;
+	}
+
+	public void setApiUrl(String apiUrl) {
+		this.apiUrl = apiUrl;
+	}
+
+	@Nullable public String getChatId() {
+		return chatId;
+	}
+
+	public void setChatId(@Nullable String chatId) {
+		this.chatId = chatId;
+	}
+
+	public Integer getMessageThreadId() {
+		return messageThreadId;
+	}
+
+	public void setMessageThreadId(Integer messageThreadId) {
+		this.messageThreadId = messageThreadId;
+	}
+
+	@Nullable public String getAuthToken() {
+		return authToken;
+	}
+
+	public void setAuthToken(@Nullable String authToken) {
+		this.authToken = authToken;
+	}
+
+	public boolean isDisableNotify() {
+		return disableNotify;
+	}
+
+	public void setDisableNotify(boolean disableNotify) {
+		this.disableNotify = disableNotify;
+	}
+
+	public String getParseMode() {
+		return parseMode;
+	}
+
+	public void setParseMode(String parseMode) {
+		this.parseMode = parseMode;
+	}
+
+}

@@ -1,0 +1,26 @@
+{
+  "instances": {
+    "httpexchanges": {
+      "label": "HTTP-Exchanges",
+      "chart": {
+        "avg_time": "ø tímalengd",
+        "max_time": "Hámarkstímalengd",
+        "status_4xx": "Staða 4xx",
+        "status_5xx": "Staða 5xx",
+        "successful_requests": "Farsælar fyrirspurnir",
+        "total_requests": "Samtals fyrirspurnir"
+      },
+      "limit": "Takmörkun",
+      "filter": {
+        "client_errors": "Vandamál biðlara",
+        "exclude_actuator": "hunsa {actuator}/**",
+        "server_errors": "Vandamál þjóns",
+        "success": "farsælt"
+      },
+      "method": "Aðferð",
+      "status": "Staða",
+      "time": "Tímalengd",
+      "timestamp": "Tímapunktur"
+    }
+  }
+}
